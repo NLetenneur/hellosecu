@@ -1,11 +1,13 @@
 package fr.diginamic.hello.entities;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-
+@Entity
+@Table(name = "ville")
 public class Ville {
-	@NotNull
-	@Min(value=1)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected int id;
 	@NotNull
 	@Size(min=2)
@@ -16,15 +18,22 @@ public class Ville {
 	/**
 	 * Constructor
 	 * 
-	 * @param id
 	 * @param nom
 	 * @param nbHabitants
 	 */
-	public Ville(int id,String nom, int nbHabitants) {
-		this.id= id;
+	public Ville(String nom, int nbHabitants) {
 		this.nom = nom;
 		this.nbHabitants = nbHabitants;
 	}
+
+
+	/** Constructor jpa
+	 * 
+	 */
+	public Ville() {
+	}
+
+
 
 	/**
 	 * Getter pour nom
