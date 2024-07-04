@@ -2,24 +2,25 @@ package fr.diginamic.hello.controleurs;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.annotation.*;
 
 import fr.diginamic.hello.entities.Ville;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/villes")
 public class VilleControleur {
 
 	ArrayList<Ville> villes = creerVilles();
+	@Autowired
+	private Validator validator;
 
 	public ArrayList<Ville> creerVilles() {
 		ArrayList<Ville> villes = new ArrayList<>();
@@ -53,7 +54,11 @@ public class VilleControleur {
 	}
 
 	@PostMapping
-	public ResponseEntity<String> ajouterVille(@RequestBody Ville nvVille) {
+	public ResponseEntity<String> ajouterVille( @Valid @RequestBody Ville nvVille, BindingResult errors) {
+		if (errors.hasErrors()) {
+			return ResponseEntity.badRequest().body(errors.getAllErrors().stream().map(e->e.getDefaultMessage()).collect(Collectors.joining("\n")));
+		}
+
 		for (Ville item : villes) {
 			if (item.getId() == (nvVille.getId())) {
 				return ResponseEntity.badRequest().body("Il y a déjà une ville avec cet ID !");
@@ -65,8 +70,11 @@ public class VilleControleur {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<String> modifierVille(@PathVariable int id, @RequestBody Ville ville) {
+	public ResponseEntity<String> modifierVille(@PathVariable int id, @Valid @RequestBody Ville ville, BindingResult errors) {
 		Ville villeATrouver = trouverVille(id);
+		if (errors.hasErrors()) {
+			return ResponseEntity.badRequest().body(errors.getAllErrors().get(0).getDefaultMessage());
+		}
 		villeATrouver.setNom(ville.getNom());
 		villeATrouver.setNbHabitants(ville.getNbHabitants());
 		return ResponseEntity.ok("Ville modifiée");

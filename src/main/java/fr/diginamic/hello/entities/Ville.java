@@ -1,9 +1,16 @@
 package fr.diginamic.hello.entities;
 
-public class Ville {
+import jakarta.validation.constraints.*;
 
+
+public class Ville {
+	@NotNull
+	@Min(value=1)
 	protected int id;
+	@NotNull
+	@Size(min=2)
 	protected String nom;
+	@Min(value=1)
 	protected int nbHabitants;
 
 	/**
