@@ -10,6 +10,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+/**Organise les entités ville
+ * 
+ */
 @Entity
 @Table(name = "ville")
 public class Ville {
@@ -92,6 +95,22 @@ public class Ville {
 	public void setId(int id) {
 		this.id = id;
 	}
+
+	/** Getter pour departement
+	 * @return departement
+	 */
+	public Departement getDepartement() {
+		return departement;
+	}
+
+	/**Setter pour departement
+	 * @param departement departement 
+	 */
+	public void setDepartement(Departement departement) {
+		this.departement = departement;
+	}
+	
+	
 
 
 }

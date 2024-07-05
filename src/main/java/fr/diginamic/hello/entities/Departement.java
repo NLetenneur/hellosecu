@@ -12,6 +12,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+/**Organise les entités département
+ * 
+ */
 @Entity
 @Table(name = "departement")
 public class Departement {

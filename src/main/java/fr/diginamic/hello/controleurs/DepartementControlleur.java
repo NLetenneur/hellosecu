@@ -20,6 +20,9 @@ import fr.diginamic.hello.entities.Ville;
 import fr.diginamic.hello.service.DepartementService;
 import jakarta.validation.Valid;
 
+/**Définit les routes liées aux départements
+ * 
+ */
 @RestController
 @RequestMapping("/departements")
 public class DepartementControlleur {
@@ -27,16 +30,25 @@ public class DepartementControlleur {
 	@Autowired
 	private DepartementService service;
 
+	/**Ressort tous les départements
+	 * 
+	 */
 	@GetMapping
 	public List<Departement> trouverDepartements() {
 		return service.extractDepartements();
 	}
 
+	/**Ressort un département
+	 * @param id L'ID du département à trouver
+	 */
 	@GetMapping("/{id}")
 	public Departement trouverDepartement(@PathVariable int id) {
 		return service.extractDepartement(id);
 	}
 
+	/**Insere un département dans la base de donnée
+	 * @param departement Le département à inserer
+	 */
 	@PostMapping
 	public ResponseEntity<String> ajouterDepartement(@Valid @RequestBody Departement nvDepartement,
 			BindingResult errors) {
@@ -48,6 +60,10 @@ public class DepartementControlleur {
 		return ResponseEntity.ok("Departement ajouté");
 	}
 
+	/**Modifie un département donné
+	 * @param id L'id du département à modifier
+	 * @param departement Les nouvelles données
+	 */
 	@PutMapping("/{id}")
 	public ResponseEntity<String> modifierDepartement(@PathVariable int id, @Valid @RequestBody Departement departement,
 			BindingResult errors) {
@@ -58,22 +74,28 @@ public class DepartementControlleur {
 		return ResponseEntity.ok("Departement modifié");
 	}
 
+	/**Supprime un département donné
+	 * @param id L'id du département à supprimer
+	 */
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> supprimerDepartement(@PathVariable int id) {
-		Departement departement = trouverDepartement(id);
-		if (departement != null) {
-			service.deleteDepartement(id);
-			return ResponseEntity.ok("Departement supprimé");
-
-		}
-		return ResponseEntity.badRequest().body("Ce departement n'existe pas");
+	public void supprimerDepartement(@PathVariable int id) {
+		service.deleteDepartement(id);
 	}
 	
+	/**Ressort les nb villes les plus peuplées d'un département
+	 * @param id L'id du département en question
+	 * @param nb Le nombre maximum de villes à sortir
+	 */
 	@GetMapping("/{id}/villesPlusPeuplees/{nb}")
 	public List<Ville> trouverVillesPlusPeuplees(@PathVariable int id,@PathVariable int nb) {
 		return service.topVillesByNbHabitants(id,nb);
 	}
 	
+	/**Ressort toutes les villes d'un département dont le nombre d'habitants est compris entre min et max
+	 * @param id L'id du département en question
+	 * @param min le nombre minimum d'habitants
+	 * @param max le nombre maximum d'habitants
+	 */
 	@GetMapping("/{id}/{min}/{max}")
 	public List<Ville> trouverVillesEntre2Pop(@PathVariable int id,@PathVariable int min,@PathVariable int max) {
 		return service.extractVillesbetweenMinMaxNbHabitants(id,min, max);
