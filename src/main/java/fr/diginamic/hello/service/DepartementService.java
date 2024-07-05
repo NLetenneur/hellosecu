@@ -39,4 +39,8 @@ public class DepartementService {
 	public List<Ville> topVillesByNbHabitants(int id, int nb) {
 		return depDAO.topVillesByNbHabitants(id, nb);
 	}
+
+	public List<Ville> extractVillesbetweenMinMaxNbHabitants(int id, int min, int max) {
+		return depDAO.extractVillesbetweenMinMaxNbHabitants(id,min, max);
+	}
 }

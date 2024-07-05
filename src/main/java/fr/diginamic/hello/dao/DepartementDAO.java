@@ -70,4 +70,12 @@ public class DepartementDAO {
 		return query.getResultList();
 	}
 
+	public List<Ville> extractVillesbetweenMinMaxNbHabitants(int id, int min, int max) {
+		TypedQuery<Ville> query = em.createQuery("SELECT v FROM Departement d JOIN d.villes v  WHERE d.id=:id AND v.nbHabitants BETWEEN :min AND :max", Ville.class);
+		query.setParameter("id", id);
+		query.setParameter("min", min);
+		query.setParameter("max", max);
+		return query.getResultList();
+	}
+
 }

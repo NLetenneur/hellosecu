@@ -73,5 +73,10 @@ public class DepartementControlleur {
 	public List<Ville> trouverVillesPlusPeuplees(@PathVariable int id,@PathVariable int nb) {
 		return service.topVillesByNbHabitants(id,nb);
 	}
+	
+	@GetMapping("/{id}/{min}/{max}")
+	public List<Ville> trouverVillesEntre2Pop(@PathVariable int id,@PathVariable int min,@PathVariable int max) {
+		return service.extractVillesbetweenMinMaxNbHabitants(id,min, max);
+	}
 
 }
