@@ -37,7 +37,7 @@ public class TraitementFichiersApplication implements CommandLineRunner {
 	@Transactional
 	@Override
 	public void run(String... args) throws Exception {
-		Path fichierOFF = home.resolve("./recensementMini.csv");
+		Path fichierOFF = home.resolve("./recensement.csv");
 		boolean exists = Files.exists(fichierOFF);
 		if (exists) {
 			try {

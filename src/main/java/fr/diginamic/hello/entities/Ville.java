@@ -20,7 +20,7 @@ public class Ville {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected int id;
 	@NotNull
-	@Size(min = 2)
+	@Size(min = 1)
 	protected String nom;
 	@Min(value = 1)
 	protected int nbHabitants;
