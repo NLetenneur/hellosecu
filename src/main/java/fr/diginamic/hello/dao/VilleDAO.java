@@ -46,7 +46,7 @@ public class VilleDAO {
 	 */
 	public void insertVille(Ville ville) {
 		if(!isVilleInDB(ville)) {
-			Ville v = new Ville(ville.getNom(), ville.getNbHabitants());
+			Ville v = new Ville(ville.getNom(), ville.getNbHabitants(), ville.getDepartement());
 			em.persist(v);
 		}
 		

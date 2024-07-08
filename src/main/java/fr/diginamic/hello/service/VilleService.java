@@ -83,8 +83,7 @@ public class VilleService {
 			id="0"+id;
 		}
 		if (!repository.existsByNomAndDepartementId(tab[6], id) && (Integer.parseInt(nbHab) > 0)) {
-			Ville ville = new Ville(tab[6], Integer.parseInt(nbHab));
-			ville.setDepartement(depRepository.getById(id));
+			Ville ville = new Ville(tab[6], Integer.parseInt(nbHab),depRepository.getById(id));
 			repository.save(ville);
 		}
 	}

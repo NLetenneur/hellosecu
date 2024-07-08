@@ -24,7 +24,7 @@ public class Ville {
 	protected String nom;
 	@Min(value = 1)
 	protected int nbHabitants;
-	
+	@NotNull
 	@ManyToOne
 	protected Departement departement;
 
@@ -33,10 +33,12 @@ public class Ville {
 	 * 
 	 * @param nom
 	 * @param nbHabitants
+	 * @param departement
 	 */
-	public Ville(@NotNull @Size(min = 2) String nom, @Min(value = 1) int nbHabitants) {
+	public Ville(@NotNull @Size(min = 2) String nom, @Min(value = 1) int nbHabitants, Departement departement) {
 		this.nom = nom;
 		this.nbHabitants = nbHabitants;
+		this.departement = departement;
 	}
 
 	/** Constructor jpa **/

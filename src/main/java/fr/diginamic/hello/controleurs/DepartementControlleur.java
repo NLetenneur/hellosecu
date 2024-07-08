@@ -1,6 +1,5 @@
 package fr.diginamic.hello.controleurs;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.diginamic.hello.entities.Departement;
-import fr.diginamic.hello.entities.Ville;
-import fr.diginamic.hello.service.DepartementService;
+import fr.diginamic.hello.repository.DepartementRepository;
 import jakarta.validation.Valid;
 
-/**Définit les routes liées aux départements
+/**
+ * Définit les routes liées aux départements
  * 
  */
 @RestController
@@ -28,26 +27,30 @@ import jakarta.validation.Valid;
 public class DepartementControlleur {
 
 	@Autowired
-	private DepartementService service;
+	private DepartementRepository repository;
 
-
-	/**Ressort tous les départements
+	/**
+	 * Ressort tous les départements
 	 * 
 	 */
 	@GetMapping
-	public List<Departement> trouverDepartements() {
-		return service.extractDepartements();
+	public Iterable<Departement> trouverDepartements() {
+		return repository.findAll();
 	}
 
-	/**Ressort un département
+	/**
+	 * Ressort un département
+	 * 
 	 * @param id L'ID du département à trouver
 	 */
 	@GetMapping("/{id}")
 	public Departement trouverDepartement(@PathVariable String id) {
-		return service.extractDepartement(id);
+		return repository.getById(id);
 	}
 
-	/**Insere un département dans la base de donnée
+	/**
+	 * Insere un département dans la base de donnée
+	 * 
 	 * @param departement Le département à inserer
 	 */
 	@PostMapping
@@ -57,50 +60,40 @@ public class DepartementControlleur {
 			return ResponseEntity.badRequest().body(
 					errors.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.joining("\n")));
 		}
-		service.insertDepartement(nvDepartement);
+		repository.save(nvDepartement);
 		return ResponseEntity.ok("Departement ajouté");
 	}
 
-	/**Modifie un département donné
-	 * @param id L'id du département à modifier
+	/**
+	 * Modifie un département donné
+	 * 
+	 * @param id          L'id du département à modifier
 	 * @param departement Les nouvelles données
 	 */
 	@PutMapping("/{id}")
-	public ResponseEntity<String> modifierDepartement(@PathVariable String id, @Valid @RequestBody Departement departement,
-			BindingResult errors) {
+	public ResponseEntity<String> modifierDepartement(@PathVariable String id,
+			@Valid @RequestBody Departement departement, BindingResult errors) {
 		if (errors.hasErrors()) {
 			return ResponseEntity.badRequest().body(errors.getAllErrors().get(0).getDefaultMessage());
 		}
-		service.updateDepartement(id, departement);
+		Departement depAModifier = repository.getById(id);
+		depAModifier.setNom(departement.getNom());
+		repository.save(depAModifier);
 		return ResponseEntity.ok("Departement modifié");
 	}
 
-	/**Supprime un département donné
+	/**
+	 * Supprime un département donné
+	 * 
 	 * @param id L'id du département à supprimer
 	 */
 	@DeleteMapping("/{id}")
 	public void supprimerDepartement(@PathVariable String id) {
-		service.deleteDepartement(id);
-	}
-	
-	/**Ressort les nb villes les plus peuplées d'un département
-	 * @param id L'id du département en question
-	 * @param nb Le nombre maximum de villes à sortir
-	 */
-	@GetMapping("/{id}/villesPlusPeuplees/{nb}")
-	public List<Ville> trouverVillesPlusPeuplees(@PathVariable String id,@PathVariable int nb) {
-		return service.topVillesByNbHabitants(id,nb);
+		repository.deleteById(id);
 	}
 
-	
-	/**Ressort toutes les villes d'un département dont le nombre d'habitants est compris entre min et max
-	 * @param id L'id du département en question
-	 * @param min le nombre minimum d'habitants
-	 * @param max le nombre maximum d'habitants
-	 */
-	@GetMapping("/{id}/{min}/{max}")
-	public List<Ville> trouverVillesEntre2Pop(@PathVariable int id,@PathVariable int min,@PathVariable int max) {
-		return service.extractVillesbetweenMinMaxNbHabitants(id,min, max);
-	}
+	// Les méthodes permettant de lister les n plus grandes villes d'un département
+	// et les villes d'un département dont la population est comprise entre deux
+	// valeurs existent déjà dans VilleControlleur
 
 }
