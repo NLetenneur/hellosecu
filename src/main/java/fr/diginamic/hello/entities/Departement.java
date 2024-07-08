@@ -3,9 +3,9 @@ package fr.diginamic.hello.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -19,20 +19,20 @@ import jakarta.validation.constraints.Size;
 @Table(name = "departement")
 public class Departement {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	protected int id;
+	protected String id;
 	@NotNull
 	@Size(min = 2)
 	protected String nom;
 	@OneToMany(mappedBy = "departement")
+	@JsonBackReference
 	private Set<Ville> villes = new HashSet<>();
 
-	/**
-	 * Constructor
-	 * 
+	/** Constructor
+	 * @param id
 	 * @param nom
 	 */
-	public Departement(@NotNull @Size(min = 2) String nom) {
+	public Departement(String id, @NotNull @Size(min = 2) String nom) {
+		this.id = id;
 		this.nom = nom;
 	}
 
@@ -59,15 +59,6 @@ public class Departement {
 	}
 
 	/**
-	 * Getter pour id
-	 * 
-	 * @return id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
 	 * Getter pour villes
 	 * 
 	 * @return villes
@@ -84,5 +75,14 @@ public class Departement {
 	public void setVilles(Set<Ville> villes) {
 		this.villes = villes;
 	}
+
+	/** Getter pour id
+	 * @return id
+	 */
+	public String getId() {
+		return id;
+	}
+	
+	
 
 }

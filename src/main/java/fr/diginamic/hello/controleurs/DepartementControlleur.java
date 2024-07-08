@@ -30,6 +30,7 @@ public class DepartementControlleur {
 	@Autowired
 	private DepartementService service;
 
+
 	/**Ressort tous les départements
 	 * 
 	 */
@@ -42,7 +43,7 @@ public class DepartementControlleur {
 	 * @param id L'ID du département à trouver
 	 */
 	@GetMapping("/{id}")
-	public Departement trouverDepartement(@PathVariable int id) {
+	public Departement trouverDepartement(@PathVariable String id) {
 		return service.extractDepartement(id);
 	}
 
@@ -65,7 +66,7 @@ public class DepartementControlleur {
 	 * @param departement Les nouvelles données
 	 */
 	@PutMapping("/{id}")
-	public ResponseEntity<String> modifierDepartement(@PathVariable int id, @Valid @RequestBody Departement departement,
+	public ResponseEntity<String> modifierDepartement(@PathVariable String id, @Valid @RequestBody Departement departement,
 			BindingResult errors) {
 		if (errors.hasErrors()) {
 			return ResponseEntity.badRequest().body(errors.getAllErrors().get(0).getDefaultMessage());
@@ -78,7 +79,7 @@ public class DepartementControlleur {
 	 * @param id L'id du département à supprimer
 	 */
 	@DeleteMapping("/{id}")
-	public void supprimerDepartement(@PathVariable int id) {
+	public void supprimerDepartement(@PathVariable String id) {
 		service.deleteDepartement(id);
 	}
 	
@@ -87,9 +88,10 @@ public class DepartementControlleur {
 	 * @param nb Le nombre maximum de villes à sortir
 	 */
 	@GetMapping("/{id}/villesPlusPeuplees/{nb}")
-	public List<Ville> trouverVillesPlusPeuplees(@PathVariable int id,@PathVariable int nb) {
+	public List<Ville> trouverVillesPlusPeuplees(@PathVariable String id,@PathVariable int nb) {
 		return service.topVillesByNbHabitants(id,nb);
 	}
+
 	
 	/**Ressort toutes les villes d'un département dont le nombre d'habitants est compris entre min et max
 	 * @param id L'id du département en question

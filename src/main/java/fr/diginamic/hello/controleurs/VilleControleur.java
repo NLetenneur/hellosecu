@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.diginamic.hello.entities.Ville;
+import fr.diginamic.hello.repository.VilleRepository;
 import fr.diginamic.hello.service.VilleService;
 import jakarta.validation.Valid;
 
@@ -28,6 +31,8 @@ public class VilleControleur {
 	
 	@Autowired
 	private VilleService service;
+	@Autowired
+	private VilleRepository repository;
 
 	/**Ressort toutes les villes
 	 * 
@@ -43,6 +48,40 @@ public class VilleControleur {
 	@GetMapping("/{id}")
 	public Ville trouverVille(@PathVariable int id) {
 		return service.extractVille(id);
+	}
+	
+	/**Ressort une liste de villes commençant par une chaine de caractères donnés
+	 * @param string la chaine de caractères à trouver
+	 */
+	@GetMapping("/nom/{string}")
+	public List<Ville> trouverVillesCommencantPar(@PathVariable String string) {
+		return repository.getByNomIsStartingWith(string);
+	}
+	
+	@GetMapping("/minHab/{min}")
+	public List<Ville> trouverVillesParHabitantsMin(@PathVariable int min) {
+		return repository.getByNbHabitantsGreaterThan(min);
+	}
+	
+	@GetMapping("/minHab/{min}/{max}")
+	public List<Ville> trouverVillesParHabitantsMinEtMax(@PathVariable int min, @PathVariable int max) {
+		return repository.getByNbHabitantsBetween(min, max);
+	}
+	
+	@GetMapping("parDep/{id}/minHab/{min}")
+	public List<Ville> trouverVillesDUnDepParHabitantsMin(@PathVariable String id, @PathVariable int min){
+		return repository.getByDepartementIdAndNbHabitantsGreaterThan(id, min);
+	}
+	
+	@GetMapping("parDep/{id}/minMaxHab/{min}/{max}")
+	public List<Ville> trouverVillesDUnDepParHabitantsMinMax(@PathVariable String id, @PathVariable int min, @PathVariable int max){
+		return repository.getByDepartementIdAndNbHabitantsBetween(id, min, max);
+	}
+	
+	@GetMapping("parDep/{id}/TopNb/{nb}")
+	public List<Ville> trouverTopNVillesDUnDep(@PathVariable String id, @PathVariable int nb){
+		Pageable pageable = PageRequest.of(0, nb);
+		return repository.findByDepartementIdOrderByNbHabitantsDesc(id, pageable);
 	}
 
 	/**Insere une ville dans la base de donnée

@@ -1,5 +1,11 @@
 package fr.diginamic.hello.service;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +15,10 @@ import org.springframework.stereotype.Service;
 import fr.diginamic.hello.dao.DepartementDAO;
 import fr.diginamic.hello.entities.Departement;
 import fr.diginamic.hello.entities.Ville;
+import fr.diginamic.hello.repository.DepartementRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**Classe de service pour les méthodes liées à la classe Departement
 * 
@@ -18,6 +27,9 @@ import jakarta.validation.Valid;
 public class DepartementService {
 	@Autowired
 	private DepartementDAO depDAO;
+	
+	@Autowired
+	private DepartementRepository repository;
 
 	/**Ressort tous les départements
 	 * 
@@ -29,7 +41,7 @@ public class DepartementService {
 	/**Ressort un département
 	 * @param id L'ID du département à trouver
 	 */
-	public Departement extractDepartement(int id) {
+	public Departement extractDepartement(String id) {
 		return depDAO.extractDepartement(id);
 	}
 	
@@ -45,14 +57,14 @@ public class DepartementService {
 	 * @param id L'id du département à modifier
 	 * @param departement Les nouvelles données
 	 */
-	public void updateDepartement(int id, @Valid Departement departement) {
+	public void updateDepartement(String id, @Valid Departement departement) {
 		depDAO.updateDepartement(id, departement);
 	}
 
 	/**Supprime un département donné
 	 * @param id L'id du département à supprimer
 	 */
-	public ResponseEntity<String> deleteDepartement(int id) {
+	public ResponseEntity<String> deleteDepartement(String id) {
 		Departement departement = extractDepartement(id);
 		if (departement != null) {
 			depDAO.deleteDepartement(id);
@@ -65,7 +77,7 @@ public class DepartementService {
 	 * @param id L'id du département en question
 	 * @param nb Le nombre maximum de villes à sortir
 	 */
-	public List<Ville> topVillesByNbHabitants(int id, int nb) {
+	public List<Ville> topVillesByNbHabitants(String id, int nb) {
 		return depDAO.topVillesByNbHabitants(id, nb);
 	}
 
@@ -79,5 +91,45 @@ public class DepartementService {
 			return depDAO.extractVillesbetweenMinMaxNbHabitants(id,min, max);
 		}
 		return null;
+	}
+
+	public void insertDepartementFromFile(String[] tab) {
+		String id = tab[2];
+		if (tab[2].length()==1) {
+			id="0"+id;
+		}
+		if(!repository.existsById(id)) {
+			String string=tab[2].replaceAll("\"", "");
+			Departement dep = new Departement(string, trouverNomParId(id));
+			repository.save(dep);
+		}		
+	}
+	public static @NotNull @Size(min = 2) String trouverNomParId(String string) {
+		Path home = Paths.get("C:\\Users\\nlete\\Documents\\Diginamic\\29. Spring Boot\\TP\\");
+		Path fichierDep = home.resolve("./departementsFrance.csv");
+		boolean exists = Files.exists(fichierDep);
+		String nomDep = null;
+		if (exists) {
+			try {
+				List<String> lines = Files.readAllLines(fichierDep, StandardCharsets.UTF_8);
+				lines.remove(0);
+				Iterator<String> iterator = lines.iterator();
+				string=string.replaceAll("\"", "");
+				while (iterator.hasNext()&&nomDep==null) {
+					String ligneCourante = iterator.next();
+					String[] tab = ligneCourante.split(",", -1);
+
+					// tester que la ligne fait la bonne taille
+					if (tab.length == 4) {
+						if (tab[0].equals(string)) {
+							nomDep = tab[1];
+						}
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return nomDep;
 	}
 }

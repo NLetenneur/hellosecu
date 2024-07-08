@@ -24,6 +24,7 @@ public class Ville {
 	protected String nom;
 	@Min(value = 1)
 	protected int nbHabitants;
+	
 	@ManyToOne
 	protected Departement departement;
 

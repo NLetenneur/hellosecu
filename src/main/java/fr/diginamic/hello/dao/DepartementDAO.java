@@ -32,7 +32,7 @@ public class DepartementDAO {
 	/**Ressort un département
 	 * @param id L'ID du département à trouver
 	 */
-	public Departement extractDepartement(int id) {
+	public Departement extractDepartement(String id) {
 		TypedQuery<Departement> query = em.createQuery("SELECT d FROM Departement d WHERE d.id=:id", Departement.class);
 		query.setParameter("id", id);
 		List<Departement> departements = query.getResultList();
@@ -47,7 +47,7 @@ public class DepartementDAO {
 	 */
 	public void insertDepartement(@Valid Departement departement) {
 		if (!isDepInDB(departement)) {
-			Departement d = new Departement(departement.getNom());
+			Departement d = new Departement(departement.getId(),departement.getNom());
 			em.persist(d);
 		}
 	}
@@ -72,7 +72,7 @@ public class DepartementDAO {
 	 * @param id L'id du département à modifier
 	 * @param departement Les nouvelles données
 	 */
-	public void updateDepartement(int id, @Valid Departement departement) {
+	public void updateDepartement(String id, @Valid Departement departement) {
 		Departement d = extractDepartement(id);
 		if(d!=null) {
 			d.setNom(departement.getNom());
@@ -83,7 +83,7 @@ public class DepartementDAO {
 	/**Supprime un département donné
 	 * @param id L'id du département à supprimer
 	 */
-	public void deleteDepartement(int id) {
+	public void deleteDepartement(String id) {
 		em.remove(extractDepartement(id));		
 	}
 
@@ -91,7 +91,7 @@ public class DepartementDAO {
 	 * @param id L'id du département en question
 	 * @param nb Le nombre maximum de villes à sortir
 	 */
-	public List<Ville> topVillesByNbHabitants(int id, int nb) {
+	public List<Ville> topVillesByNbHabitants(String id, int nb) {
 		TypedQuery<Ville> query = em.createQuery("SELECT v FROM Departement d JOIN d.villes v  WHERE d.id=:id ORDER BY v.nbHabitants desc", Ville.class).setMaxResults(nb);
 		query.setParameter("id", id);
 		return query.getResultList();
