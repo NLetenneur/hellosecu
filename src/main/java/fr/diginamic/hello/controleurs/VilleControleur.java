@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.diginamic.hello.entities.Ville;
 import fr.diginamic.hello.repository.VilleRepository;
-import fr.diginamic.hello.service.VilleService;
 import jakarta.validation.Valid;
 
 /**Définit les routes liées aux villes
@@ -30,16 +29,15 @@ import jakarta.validation.Valid;
 public class VilleControleur {
 	
 	@Autowired
-	private VilleService service;
-	@Autowired
 	private VilleRepository repository;
 
 	/**Ressort toutes les villes
 	 * 
 	 */
 	@GetMapping
-	public List<Ville> trouverVilles() {
-		return service.extractVilles();
+	public Iterable<Ville> trouverVilles() {
+		Pageable pageableList = PageRequest.of(0,20);
+		return repository.findAll(pageableList);
 	}
 
 	/**Ressort une ville
@@ -47,7 +45,7 @@ public class VilleControleur {
 	 */
 	@GetMapping("/{id}")
 	public Ville trouverVille(@PathVariable int id) {
-		return service.extractVille(id);
+		return repository.getById(id);
 	}
 	
 	/**Ressort une liste de villes commençant par une chaine de caractères donnés
@@ -58,29 +56,49 @@ public class VilleControleur {
 		return repository.getByNomIsStartingWith(string);
 	}
 	
+	/**Ressort une liste de villes dont la population minimal correspond à la valeur donnée
+	 * @param min la valeur minimale
+	 */
 	@GetMapping("/minHab/{min}")
 	public List<Ville> trouverVillesParHabitantsMin(@PathVariable int min) {
 		return repository.getByNbHabitantsGreaterThan(min);
 	}
 	
+	/**Ressort une liste de villes dont la population est entre deux valeurs
+	 * @param min la valeur minimale
+	 * @param max la valeur maximale
+	 */
 	@GetMapping("/minHab/{min}/{max}")
 	public List<Ville> trouverVillesParHabitantsMinEtMax(@PathVariable int min, @PathVariable int max) {
 		return repository.getByNbHabitantsBetween(min, max);
 	}
 	
+	/**Ressort une liste de villes d'un département dont la population minimal correspond à la valeur donnée
+	 * @param id l'id du département
+	 * @param min la valeur minimale
+	 */
 	@GetMapping("parDep/{id}/minHab/{min}")
 	public List<Ville> trouverVillesDUnDepParHabitantsMin(@PathVariable String id, @PathVariable int min){
 		return repository.getByDepartementIdAndNbHabitantsGreaterThan(id, min);
 	}
 	
+	/**Ressort une liste de villes d'un département dont la population est entre deux valeurs
+	 * @param id l'id du département
+	 * @param min la valeur minimale
+	 * @param max la valeur maximale
+	 */
 	@GetMapping("parDep/{id}/minMaxHab/{min}/{max}")
 	public List<Ville> trouverVillesDUnDepParHabitantsMinMax(@PathVariable String id, @PathVariable int min, @PathVariable int max){
 		return repository.getByDepartementIdAndNbHabitantsBetween(id, min, max);
 	}
 	
+	/**Ressort une liste des nb villes les plus peuplées d'un département
+	 * @param id l'id du département
+	 * @param nb le nombre de villes à sortir
+	 */
 	@GetMapping("parDep/{id}/TopNb/{nb}")
 	public List<Ville> trouverTopNVillesDUnDep(@PathVariable String id, @PathVariable int nb){
-		Pageable pageable = PageRequest.of(0, nb);
+		Pageable pageable = PageRequest.of(0,nb);
 		return repository.findByDepartementIdOrderByNbHabitantsDesc(id, pageable);
 	}
 
@@ -92,7 +110,7 @@ public class VilleControleur {
 		if (errors.hasErrors()) {
 			return ResponseEntity.badRequest().body(errors.getAllErrors().stream().map(e->e.getDefaultMessage()).collect(Collectors.joining("\n")));
 		}
-		service.insertVille(nvVille);
+		repository.save(nvVille);
 		return ResponseEntity.ok("Ville ajoutée");
 	}
 	
@@ -105,7 +123,11 @@ public class VilleControleur {
 		if (errors.hasErrors()) {
 			return ResponseEntity.badRequest().body(errors.getAllErrors().get(0).getDefaultMessage());
 		}
-		service.updateVille(id, ville);
+		Ville villeAModifier = repository.getById(id);
+		villeAModifier.setNom(ville.getNom());
+		villeAModifier.setNbHabitants(ville.getNbHabitants());
+		villeAModifier.setDepartement(ville.getDepartement());
+		repository.save(villeAModifier);
 		return ResponseEntity.ok("Ville modifiée");
 	}
 
@@ -116,7 +138,7 @@ public class VilleControleur {
 	public ResponseEntity<String> supprimerVille(@PathVariable int id) {
 		Ville ville = trouverVille(id);
 		if (ville != null) {
-			service.deleteVille(id);
+			repository.deleteById(id);
 			return ResponseEntity.ok("Ville supprimée");
 
 		}
