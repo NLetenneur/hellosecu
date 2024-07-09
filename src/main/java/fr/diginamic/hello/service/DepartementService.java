@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import fr.diginamic.hello.DTO.DepartementDTO;
 import fr.diginamic.hello.dao.DepartementDAO;
 import fr.diginamic.hello.entities.Departement;
 import fr.diginamic.hello.entities.Ville;
+import fr.diginamic.hello.repository.DepartementDTORepository;
 import fr.diginamic.hello.repository.DepartementRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -30,12 +32,14 @@ public class DepartementService {
 	
 	@Autowired
 	private DepartementRepository repository;
+	@Autowired
+	private DepartementDTORepository repositoryDTO;
 
 	/**Ressort tous les départements
 	 * 
 	 */
-	public List<Departement> extractDepartements() {
-		return depDAO.extractDepartements();
+	public List<DepartementDTO> extractDepartements() {
+		return repositoryDTO.findAll();
 	}
 
 	/**Ressort un département
@@ -93,6 +97,10 @@ public class DepartementService {
 		return null;
 	}
 
+	/** Insere un département depuis un fichier
+	 * 
+	 * @param tab Tableau contenant les données à enregistrer
+	 */
 	public void insertDepartementFromFile(String[] tab) {
 		String id = tab[2];
 		if (tab[2].length()==1) {
@@ -104,6 +112,12 @@ public class DepartementService {
 			repository.save(dep);
 		}		
 	}
+	
+
+	/** Permet de retrouver le nom d'un département dans un fichier à partir de son code/id
+	 * 
+	 * @param string L'id du département à trouver
+	 */
 	public static @NotNull @Size(min = 2) String trouverNomParId(String string) {
 		Path home = Paths.get("C:\\Users\\nlete\\Documents\\Diginamic\\29. Spring Boot\\TP\\");
 		Path fichierDep = home.resolve("./departementsFrance.csv");
@@ -132,4 +146,21 @@ public class DepartementService {
 		}
 		return nomDep;
 	}
+	
+	/**Transforme un département en departementDTO
+	 * 
+	 * @param departement Le département à transformer
+	 */
+	public DepartementDTO departementToDepartementDTO(Departement dep) {
+		DepartementDTO dto = new DepartementDTO();
+		dto.setCodeDepartement(dep.getId());
+		dto.setNomDepartement(dep.getNom());
+		int nbHab = 0;
+		for (Ville item : dep.getVilles()) {
+			nbHab += item.getNbHabitants();
+		}
+		dto.setNbHabitants(nbHab);
+		return dto;
+	}
+	
 }

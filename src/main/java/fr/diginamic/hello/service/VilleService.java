@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.diginamic.hello.DTO.VilleDTO;
 import fr.diginamic.hello.dao.VilleDAO;
 import fr.diginamic.hello.entities.Ville;
 import fr.diginamic.hello.repository.DepartementRepository;
@@ -79,13 +80,26 @@ public class VilleService {
 	public void insertVilleFromFile(String[] tab) {
 		String nbHab = tab[9].replace(" ", "");
 		String id = tab[2];
-		if (tab[2].length()==1) {
-			id="0"+id;
+		if (tab[2].length() == 1) {
+			id = "0" + id;
 		}
 		if (!repository.existsByNomAndDepartementId(tab[6], id) && (Integer.parseInt(nbHab) > 0)) {
-			Ville ville = new Ville(tab[6], Integer.parseInt(nbHab),depRepository.getById(id));
+			Ville ville = new Ville(tab[6], Integer.parseInt(nbHab), depRepository.getById(id));
 			repository.save(ville);
 		}
+	}
+
+	/**Transforme une ville en villeDTO
+	 * 
+	 * @param ville La ville à transformer
+	 */
+	public VilleDTO villeToVilleDTO(Ville ville) {
+		VilleDTO dto = new VilleDTO();
+		dto.setCodeVille(ville.getId());
+		dto.setNbHabitants(ville.getNbHabitants());
+		dto.setCodeDepartement(ville.getDepartement().getId());
+		dto.setNomDepartement(ville.getDepartement().getNom());
+		return dto;
 	}
 
 }
