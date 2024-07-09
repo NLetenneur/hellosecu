@@ -1,5 +1,6 @@
 package fr.diginamic.hello.controleurs;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.diginamic.hello.entities.Departement;
 import fr.diginamic.hello.repository.DepartementRepository;
+import fr.diginamic.hello.service.DepartementService;
+import fr.diginamic.hello.DTO.*;
 import jakarta.validation.Valid;
 
 /**
@@ -28,14 +31,16 @@ public class DepartementControlleur {
 
 	@Autowired
 	private DepartementRepository repository;
+	@Autowired
+	private DepartementService service;
 
 	/**
-	 * Ressort tous les départements
+	 * Ressort tous les départements au format DTO
 	 * 
 	 */
 	@GetMapping
-	public Iterable<Departement> trouverDepartements() {
-		return repository.findAll();
+	public List<DepartementDTO> trouverDepartements() {
+		return service.extractDepartementsDTO();
 	}
 
 	/**

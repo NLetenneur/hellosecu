@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,7 +17,6 @@ import fr.diginamic.hello.DTO.DepartementDTO;
 import fr.diginamic.hello.dao.DepartementDAO;
 import fr.diginamic.hello.entities.Departement;
 import fr.diginamic.hello.entities.Ville;
-import fr.diginamic.hello.repository.DepartementDTORepository;
 import fr.diginamic.hello.repository.DepartementRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -32,14 +32,12 @@ public class DepartementService {
 	
 	@Autowired
 	private DepartementRepository repository;
-	@Autowired
-	private DepartementDTORepository repositoryDTO;
 
 	/**Ressort tous les départements
 	 * 
 	 */
-	public List<DepartementDTO> extractDepartements() {
-		return repositoryDTO.findAll();
+	public List<Departement> extractDepartements() {
+		return depDAO.extractDepartements();
 	}
 
 	/**Ressort un département
@@ -161,6 +159,18 @@ public class DepartementService {
 		}
 		dto.setNbHabitants(nbHab);
 		return dto;
+	}
+	
+	/**Extraits les déârtements de la base et les met au format DTO
+	 * 
+	 */
+	public List<DepartementDTO> extractDepartementsDTO() {
+		List<Departement> deps= depDAO.extractDepartements();
+		List<DepartementDTO> depsDTO = new ArrayList<>();
+		for(Departement item : deps) {
+			depsDTO.add(departementToDepartementDTO(item));
+		}
+		return depsDTO;
 	}
 	
 }
