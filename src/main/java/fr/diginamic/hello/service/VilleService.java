@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import fr.diginamic.hello.DTO.VilleDTO;
 import fr.diginamic.hello.dao.VilleDAO;
 import fr.diginamic.hello.entities.Ville;
+import fr.diginamic.hello.exceptions.FonctionnalException;
 import fr.diginamic.hello.repository.DepartementRepository;
 import fr.diginamic.hello.repository.VilleRepository;
 
@@ -45,8 +46,17 @@ public class VilleService {
 	 * Insere une ville dans la base de donnée
 	 * 
 	 * @param ville La ville à inserer
+	 * @throws FonctionnalException
 	 */
-	public List<Ville> insertVille(Ville ville) {
+	public List<Ville> insertVille(Ville ville) throws FonctionnalException {
+		if ((ville.getNbHabitants() < 10) || (ville.getNom().length() < 2)
+				|| ((ville.getDepartement().getId().length() != 2) && ville.getDepartement().getId().length() != 3)) {
+			throw new FonctionnalException(
+					"Le format de la ville n'est pas bon. Une ville doit avoir au moins dit habitants, son nom doit faire minimum deux lettres et le code département doit faire deux ou trois caractères de long.");
+		}
+		if (villeDAO.isVilleInDB(ville)) {
+			throw new FonctionnalException("Cette ville est déjà en base");
+		}
 		villeDAO.insertVille(ville);
 		return extractVilles();
 	}
@@ -56,8 +66,17 @@ public class VilleService {
 	 * 
 	 * @param id    L'id de la ville à modifier
 	 * @param ville Les nouvelles données
+	 * @throws FonctionnalException 
 	 */
-	public List<Ville> updateVille(int id, Ville ville) {
+	public List<Ville> updateVille(int id, Ville ville) throws FonctionnalException {
+		if ((ville.getNbHabitants() < 10) || (ville.getNom().length() < 2)
+				|| ((ville.getDepartement().getId().length() != 2) && ville.getDepartement().getId().length() != 3)) {
+			throw new FonctionnalException(
+					"Le format de la ville n'est pas bon. Une ville doit avoir au moins dit habitants, son nom doit faire minimum deux lettres et le code département doit faire deux ou trois caractères de long.");
+		}
+		if (villeDAO.isVilleInDB(ville)) {
+			throw new FonctionnalException("Cette ville est déjà en base");
+		}
 		villeDAO.updateVille(id, ville);
 		return extractVilles();
 	}
@@ -89,7 +108,8 @@ public class VilleService {
 		}
 	}
 
-	/**Transforme une ville en villeDTO
+	/**
+	 * Transforme une ville en villeDTO
 	 * 
 	 * @param ville La ville à transformer
 	 */

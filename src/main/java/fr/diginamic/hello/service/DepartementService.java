@@ -17,6 +17,7 @@ import fr.diginamic.hello.DTO.DepartementDTO;
 import fr.diginamic.hello.dao.DepartementDAO;
 import fr.diginamic.hello.entities.Departement;
 import fr.diginamic.hello.entities.Ville;
+import fr.diginamic.hello.exceptions.FonctionnalException;
 import fr.diginamic.hello.repository.DepartementRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -49,8 +50,14 @@ public class DepartementService {
 	
 	/**Insere un département dans la base de donnée
 	 * @param departement Le département à inserer
+	 * @throws FonctionnalException 
 	 */
-	public void insertDepartement(@Valid Departement nvDepartement) {
+	public void insertDepartement(@Valid Departement nvDepartement) throws FonctionnalException {
+		if(((3<nvDepartement.getId().length())&&(nvDepartement.getId().length()<2))
+				||(nvDepartement.getNom().length()<3)
+				) {
+			throw new FonctionnalException("Le format du département est erroné");
+		}
 		depDAO.insertDepartement(nvDepartement);
 
 	}
@@ -58,8 +65,14 @@ public class DepartementService {
 	/**Modifie un département donné
 	 * @param id L'id du département à modifier
 	 * @param departement Les nouvelles données
+	 * @throws FonctionnalException 
 	 */
-	public void updateDepartement(String id, @Valid Departement departement) {
+	public void updateDepartement(String id, @Valid Departement departement) throws FonctionnalException {
+		if(((3<departement.getId().length())&&(departement.getId().length()<2))
+				||(departement.getNom().length()<3)
+				) {
+			throw new FonctionnalException("Le format du département est erroné");
+		}
 		depDAO.updateDepartement(id, departement);
 	}
 

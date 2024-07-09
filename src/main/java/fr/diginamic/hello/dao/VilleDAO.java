@@ -55,7 +55,7 @@ public class VilleDAO {
 	/**Vérifie la présence d'une ville dans la base de données
 	 * @param ville La ville à vérifier
 	 */
-	private boolean isVilleInDB(Ville ville) {
+	public boolean isVilleInDB(Ville ville) {
 		TypedQuery<Ville> query= em.createQuery("SELECT v FROM Ville v WHERE v.id=:id", Ville.class);		
 		query.setParameter("id", ville.getId());
 		List<Ville> villes = query.getResultList();
