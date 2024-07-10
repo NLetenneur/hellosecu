@@ -13,12 +13,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import fr.diginamic.hello.DTO.DepartementDTO;
 import fr.diginamic.hello.dao.DepartementDAO;
 import fr.diginamic.hello.entities.Departement;
 import fr.diginamic.hello.entities.Ville;
 import fr.diginamic.hello.exceptions.FonctionnalException;
 import fr.diginamic.hello.repository.DepartementRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -33,6 +44,9 @@ public class DepartementService {
 	
 	@Autowired
 	private DepartementRepository repository;
+	
+	@Autowired
+	private DepartementDTO depDTO;
 
 	/**Ressort tous les départements
 	 * 
@@ -184,6 +198,32 @@ public class DepartementService {
 			depsDTO.add(departementToDepartementDTO(item));
 		}
 		return depsDTO;
+	}
+
+	public void idDepartementToPDF(String id, HttpServletResponse response) throws DocumentException, IOException {
+		String titre = depDTO.getNomFromAPI(id);
+		response.setHeader("Content-Disposition", "attachment; filename=\"fichier.pdf\"");
+		Document document = new Document(PageSize.A4);
+		PdfWriter.getInstance(document, response.getOutputStream());
+		
+		document.open();
+		document.addTitle(titre);
+		
+		document.newPage();
+		BaseFont baseFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
+		Phrase p1 = new Phrase("Code département : "+id, new Font(baseFont, 32.0f, 1, new BaseColor(0, 51, 80)));
+		document.add(p1);
+        document.add( Chunk.NEWLINE );
+		Departement dep = extractDepartement(id);
+		for(Ville item : dep.getVilles()) {
+			Phrase p2 = new Phrase(item.getNom()+" - nombre d'habitants : "+item.getNbHabitants(), new Font(baseFont, 12.0f, 0, new BaseColor(0, 51, 80)));
+			document.add(p2);
+	        document.add( Chunk.NEWLINE );
+		}
+		document.close();
+		
+		response.flushBuffer();
+		
 	}
 	
 }

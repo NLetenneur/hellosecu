@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.diginamic.hello.DTO.DepartementDTO;
 import fr.diginamic.hello.entities.Departement;
 import fr.diginamic.hello.repository.DepartementRepository;
 import fr.diginamic.hello.service.DepartementService;
-import fr.diginamic.hello.DTO.*;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 /**
@@ -95,6 +96,12 @@ public class DepartementControlleur {
 	@DeleteMapping("/{id}")
 	public void supprimerDepartement(@PathVariable String id) {
 		repository.deleteById(id);
+	}
+
+	@GetMapping("/export/pdf/{id}/fiche")
+	public void ficheDepartement(@PathVariable String id, HttpServletResponse response) throws Exception {
+		service.idDepartementToPDF(id, response);
+		
 	}
 
 	// Les méthodes permettant de lister les n plus grandes villes d'un département
