@@ -1,5 +1,7 @@
 package fr.diginamic.hello.service;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import fr.diginamic.hello.entities.Ville;
 import fr.diginamic.hello.exceptions.FonctionnalException;
 import fr.diginamic.hello.repository.DepartementRepository;
 import fr.diginamic.hello.repository.VilleRepository;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Classe de service pour les méthodes liées à la classe Ville
@@ -66,7 +69,7 @@ public class VilleService {
 	 * 
 	 * @param id    L'id de la ville à modifier
 	 * @param ville Les nouvelles données
-	 * @throws FonctionnalException 
+	 * @throws FonctionnalException
 	 */
 	public List<Ville> updateVille(int id, Ville ville) throws FonctionnalException {
 		if ((ville.getNbHabitants() < 10) || (ville.getNom().length() < 2)
@@ -120,6 +123,28 @@ public class VilleService {
 		dto.setCodeDepartement(ville.getDepartement().getId());
 		dto.setNomDepartement(ville.getDepartement().getNom());
 		return dto;
+	}
+
+	public void villesWithMinHabitants(int min, HttpServletResponse response) throws IOException {
+		response.setContentType("text/csv");
+		response.setHeader("Content-Disposition", "attachment; filename=\"fichier.csv\"");
+		String CSV_HEADER = "Nom,Nb_habitants,code_departement, nom_departement\n";
+		StringBuilder csvContent = new StringBuilder();
+		csvContent.append(CSV_HEADER);
+		List<Ville> villes = extractVillesWithMinHabitants(min);
+		PrintWriter writer = response.getWriter();
+		writer.print("Nom,NbHabitants,codeDepartement,nomDepartement\n");
+		for (Ville ville : villes) {
+			writer.print(ville.getNom() + "," + ville.getNbHabitants() + "," + ville.getDepartement().getId() + ","
+					+ ville.getDepartement().getNom() + "\n");
+		}
+		writer.println();
+
+	}
+
+	private List<Ville> extractVillesWithMinHabitants(int min) {
+		List<Ville> villes = repository.getByNbHabitantsGreaterThan(min);
+		return villes;
 	}
 
 }

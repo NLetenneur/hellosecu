@@ -211,12 +211,12 @@ public class DepartementService {
 		
 		document.newPage();
 		BaseFont baseFont = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.EMBEDDED);
-		Phrase p1 = new Phrase("Code département : "+id, new Font(baseFont, 32.0f, 1, new BaseColor(0, 51, 80)));
+		Phrase p1 = new Phrase(id+" "+titre, new Font(baseFont, 32.0f, 1, new BaseColor(0, 51, 80)));
 		document.add(p1);
         document.add( Chunk.NEWLINE );
 		Departement dep = extractDepartement(id);
 		for(Ville item : dep.getVilles()) {
-			Phrase p2 = new Phrase(item.getNom()+" - nombre d'habitants : "+item.getNbHabitants(), new Font(baseFont, 12.0f, 0, new BaseColor(0, 51, 80)));
+			Phrase p2 = new Phrase(item.getNom()+" - "+item.getNbHabitants()+" habitants.", new Font(baseFont, 12.0f, 0, new BaseColor(0, 51, 80)));
 			document.add(p2);
 	        document.add( Chunk.NEWLINE );
 		}

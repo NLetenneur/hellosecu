@@ -97,7 +97,10 @@ public class DepartementControlleur {
 	public void supprimerDepartement(@PathVariable String id) {
 		repository.deleteById(id);
 	}
-
+	
+	/**Sort au format PDF les villes d'un département donné
+	 * @param id L'id du département
+	 */
 	@GetMapping("/export/pdf/{id}/fiche")
 	public void ficheDepartement(@PathVariable String id, HttpServletResponse response) throws Exception {
 		service.idDepartementToPDF(id, response);

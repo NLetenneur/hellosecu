@@ -20,9 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.diginamic.hello.DTO.VilleDTO;
 import fr.diginamic.hello.entities.Ville;
 import fr.diginamic.hello.repository.VilleRepository;
-import io.swagger.v3.oas.annotations.*;
-import io.swagger.v3.oas.annotations.media.*;
-import io.swagger.v3.oas.annotations.responses.*;
+import fr.diginamic.hello.service.VilleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 /**Définit les routes liées aux villes
@@ -34,6 +38,9 @@ public class VilleControleur {
 	
 	@Autowired
 	private VilleRepository repository;
+	
+	@Autowired
+	private VilleService service;
 
 	/**Ressort toutes les villes
 	 * 
@@ -187,6 +194,15 @@ public class VilleControleur {
 
 		}
 		return ResponseEntity.badRequest().body("Cette ville n'existe pas");
+	}
+	
+	/**Sort au format PDF les villes dont la population est suppérieure ou égale à un minimum donné
+	 * @param min 
+	 */
+	@GetMapping("/export/csv/{min}")
+	public void ficheVillesMinNBHabitants(@PathVariable int min, HttpServletResponse response) throws Exception {
+		service.villesWithMinHabitants(min, response);
+		
 	}
 
 }

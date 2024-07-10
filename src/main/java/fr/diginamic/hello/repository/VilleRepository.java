@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import fr.diginamic.hello.entities.Ville;
 
-@Service
+@Component
 public interface VilleRepository extends JpaRepository<Ville, Integer>{
 
 	boolean existsByNomAndDepartementId(String string, String string2);
