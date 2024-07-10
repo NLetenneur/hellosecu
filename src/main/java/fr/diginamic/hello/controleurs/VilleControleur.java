@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.diginamic.hello.DTO.VilleDTO;
 import fr.diginamic.hello.entities.Ville;
 import fr.diginamic.hello.repository.VilleRepository;
+import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.media.*;
+import io.swagger.v3.oas.annotations.responses.*;
 import jakarta.validation.Valid;
 
 /**Définit les routes liées aux villes
@@ -34,6 +38,14 @@ public class VilleControleur {
 	/**Ressort toutes les villes
 	 * 
 	 */
+	@Operation(summary = "Liste de toutes les villes")
+	@ApiResponses(value = {
+			  @ApiResponse(responseCode = "200",
+					       description = "Retourne la liste des villes",
+					       content = { @Content(mediaType = "application/json",
+					       schema = @Schema(implementation = VilleDTO.class)) }),
+			  @ApiResponse(responseCode = "400", description = "Si une règle métier n'est pas respectée.",
+			    			content = @Content)})
 	@GetMapping
 	public Iterable<Ville> trouverVilles() {
 		Pageable pageableList = PageRequest.of(0,20);
@@ -43,6 +55,14 @@ public class VilleControleur {
 	/**Ressort une ville
 	 * @param id l'ID de la ville à trouver
 	 */
+	@Operation(summary = "Ressort une ville")
+	@ApiResponses(value = {
+			  @ApiResponse(responseCode = "200",
+					       description = "Sort la ville dont l'id est renseigné",
+					       content = { @Content(mediaType = "application/json",
+					       schema = @Schema(implementation = VilleDTO.class)) }),
+			  @ApiResponse(responseCode = "400", description = "Si une règle métier n'est pas respectée.",
+			    			content = @Content)})
 	@GetMapping("/{id}")
 	public Ville trouverVille(@PathVariable int id) {
 		return repository.getById(id);
@@ -51,6 +71,14 @@ public class VilleControleur {
 	/**Ressort une liste de villes commençant par une chaine de caractères donnés
 	 * @param string la chaine de caractères à trouver
 	 */
+	@Operation(summary = "Ressort une liste de villes commençant par {string}")
+	@ApiResponses(value = {
+			  @ApiResponse(responseCode = "200",
+					       description = "Sort une liste de villes commençant par {string}",
+					       content = { @Content(mediaType = "application/json",
+					       schema = @Schema(implementation = VilleDTO.class)) }),
+			  @ApiResponse(responseCode = "400", description = "Si une règle métier n'est pas respectée.",
+			    			content = @Content)})
 	@GetMapping("/nom/{string}")
 	public List<Ville> trouverVillesCommencantPar(@PathVariable String string) {
 		return repository.getByNomIsStartingWith(string);
@@ -59,6 +87,14 @@ public class VilleControleur {
 	/**Ressort une liste de villes dont la population minimal correspond à la valeur donnée
 	 * @param min la valeur minimale
 	 */
+	@Operation(summary = "Ressort une liste de villes ayant un nombre d'habitants suppérieur ou égal à {min}")
+	@ApiResponses(value = {
+			  @ApiResponse(responseCode = "200",
+					       description = "Sort une liste de villes ayant un nombre d'habitants suppérieur ou égal à {min}",
+					       content = { @Content(mediaType = "application/json",
+					       schema = @Schema(implementation = VilleDTO.class)) }),
+			  @ApiResponse(responseCode = "400", description = "Si une règle métier n'est pas respectée.",
+			    			content = @Content)})
 	@GetMapping("/minHab/{min}")
 	public List<Ville> trouverVillesParHabitantsMin(@PathVariable int min) {
 		return repository.getByNbHabitantsGreaterThan(min);
@@ -101,10 +137,18 @@ public class VilleControleur {
 		Pageable pageable = PageRequest.of(0,nb);
 		return repository.findByDepartementIdOrderByNbHabitantsDesc(id, pageable);
 	}
-
+	
 	/**Insere une ville dans la base de donnée
 	 * @param ville La ville à inserer
 	 */
+	@Operation(summary = "Création d'une nouvelle ville")
+	@ApiResponses(value = {
+	  @ApiResponse(responseCode = "200",
+			       description = "Retourne la liste des villes incluant la dernière ville créée",
+			       content = { @Content(mediaType = "application/json",
+			       schema = @Schema(implementation = VilleDTO.class)) }),
+	  @ApiResponse(responseCode = "400", description = "Si une règle métier n'est pas respectée.",
+	    			content = @Content)})
 	@PostMapping
 	public ResponseEntity<String> ajouterVille( @Valid @RequestBody Ville nvVille, BindingResult errors) {
 		if (errors.hasErrors()) {
