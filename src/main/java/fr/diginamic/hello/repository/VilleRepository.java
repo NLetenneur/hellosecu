@@ -11,13 +11,13 @@ import fr.diginamic.hello.entities.Ville;
 @Component
 public interface VilleRepository extends JpaRepository<Ville, Integer>{
 
-	boolean existsByNomAndDepartementId(String string, String string2);
+	boolean existsByNomAndDepartementCodeDep(String string, String string2);
 	List<Ville> getByNomIsStartingWith(String string);
 	List<Ville> getByNbHabitantsGreaterThan(int min);
 	List<Ville> getByNbHabitantsBetween(int min, int max);
-	List<Ville> getByDepartementIdAndNbHabitantsGreaterThan(String id, int min);
-	List<Ville> getByDepartementIdAndNbHabitantsBetween(String id, int min, int max);
-	List<Ville> findByDepartementIdOrderByNbHabitantsDesc(String id, Pageable pageable);
+	List<Ville> getByDepartementCodeDepAndNbHabitantsGreaterThan(String id, int min);
+	List<Ville> getByDepartementCodeDepAndNbHabitantsBetween(String id, int min, int max);
+	List<Ville> findByDepartementCodeDepOrderByNbHabitantsDesc(String id, Pageable pageable);
 	Ville getById(int id);
 
 }

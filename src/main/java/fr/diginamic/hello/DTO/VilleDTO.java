@@ -2,6 +2,21 @@ package fr.diginamic.hello.DTO;
 
 public class VilleDTO {
 	protected int codeVille;
+	protected String nom;
+	/** Getter pour nom
+	 * @return nom
+	 */
+	public String getNom() {
+		return nom;
+	}
+
+	/**Setter pour nom
+	 * @param nom nom 
+	 */
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
 	protected int nbHabitants;
 	protected String codeDepartement;
 	protected String nomDepartement;

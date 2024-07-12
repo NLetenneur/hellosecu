@@ -37,7 +37,7 @@ public class TraitementFichiersApplication implements CommandLineRunner {
 	@Transactional
 	@Override
 	public void run(String... args) throws Exception {
-		Path fichierOFF = home.resolve("./recensement.csv");
+		Path fichierOFF = home.resolve("./recensementMini.csv");
 		boolean exists = Files.exists(fichierOFF);
 		if (exists) {
 			try {
@@ -50,8 +50,8 @@ public class TraitementFichiersApplication implements CommandLineRunner {
 
 					// tester que la ligne fait la bonne taille
 					if (tab.length == 10) {
-						departementService.insertDepartementFromFile(tab);
-						villeService.insertVilleFromFile(tab);
+						//departementService.insertDepartementFromFile(tab);
+						//villeService.insertVilleFromFile(tab);
 					}
 				}
 			} catch (IOException e) {

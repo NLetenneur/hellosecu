@@ -122,7 +122,7 @@ public class VilleControleur {
 	 */
 	@GetMapping("parDep/{id}/minHab/{min}")
 	public List<Ville> trouverVillesDUnDepParHabitantsMin(@PathVariable String id, @PathVariable int min){
-		return repository.getByDepartementIdAndNbHabitantsGreaterThan(id, min);
+		return repository.getByDepartementCodeDepAndNbHabitantsGreaterThan(id, min);
 	}
 	
 	/**Ressort une liste de villes d'un département dont la population est entre deux valeurs
@@ -132,7 +132,7 @@ public class VilleControleur {
 	 */
 	@GetMapping("parDep/{id}/minMaxHab/{min}/{max}")
 	public List<Ville> trouverVillesDUnDepParHabitantsMinMax(@PathVariable String id, @PathVariable int min, @PathVariable int max){
-		return repository.getByDepartementIdAndNbHabitantsBetween(id, min, max);
+		return repository.getByDepartementCodeDepAndNbHabitantsBetween(id, min, max);
 	}
 	
 	/**Ressort une liste des nb villes les plus peuplées d'un département
@@ -142,7 +142,7 @@ public class VilleControleur {
 	@GetMapping("parDep/{id}/TopNb/{nb}")
 	public List<Ville> trouverTopNVillesDUnDep(@PathVariable String id, @PathVariable int nb){
 		Pageable pageable = PageRequest.of(0,nb);
-		return repository.findByDepartementIdOrderByNbHabitantsDesc(id, pageable);
+		return repository.findByDepartementCodeDepOrderByNbHabitantsDesc(id, pageable);
 	}
 	
 	/**Insere une ville dans la base de donnée
@@ -177,7 +177,7 @@ public class VilleControleur {
 		Ville villeAModifier = repository.getById(id);
 		villeAModifier.setNom(ville.getNom());
 		villeAModifier.setNbHabitants(ville.getNbHabitants());
-		villeAModifier.setDepartement(ville.getDepartement());
+//		villeAModifier.setDepartement(ville.getDepartement());
 		repository.save(villeAModifier);
 		return ResponseEntity.ok("Ville modifiée");
 	}

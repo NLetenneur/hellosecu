@@ -67,7 +67,7 @@ public class DepartementService {
 	 * @throws FonctionnalException 
 	 */
 	public void insertDepartement(@Valid Departement nvDepartement) throws FonctionnalException {
-		if(((3<nvDepartement.getId().length())&&(nvDepartement.getId().length()<2))
+		if(((3<nvDepartement.getCodeDep().length())&&(nvDepartement.getCodeDep().length()<2))
 				||(nvDepartement.getNom().length()<3)
 				) {
 			throw new FonctionnalException("Le format du département est erroné");
@@ -82,7 +82,7 @@ public class DepartementService {
 	 * @throws FonctionnalException 
 	 */
 	public void updateDepartement(String id, @Valid Departement departement) throws FonctionnalException {
-		if(((3<departement.getId().length())&&(departement.getId().length()<2))
+		if(((3<departement.getCodeDep().length())&&(departement.getCodeDep().length()<2))
 				||(departement.getNom().length()<3)
 				) {
 			throw new FonctionnalException("Le format du département est erroné");
@@ -127,13 +127,12 @@ public class DepartementService {
 	 * @param tab Tableau contenant les données à enregistrer
 	 */
 	public void insertDepartementFromFile(String[] tab) {
-		String id = tab[2];
+		String CodeDep = tab[2];
 		if (tab[2].length()==1) {
-			id="0"+id;
+			CodeDep="0"+CodeDep;
 		}
-		if(!repository.existsById(id)) {
-			String string=tab[2].replaceAll("\"", "");
-			Departement dep = new Departement(string, trouverNomParId(id));
+		if(!repository.existsByCodeDep(CodeDep)) {
+			Departement dep = new Departement(CodeDep, trouverNomParCodeDep(CodeDep));
 			repository.save(dep);
 		}		
 	}
@@ -143,7 +142,7 @@ public class DepartementService {
 	 * 
 	 * @param string L'id du département à trouver
 	 */
-	public static @NotNull @Size(min = 2) String trouverNomParId(String string) {
+	public static @NotNull @Size(min = 2) String trouverNomParCodeDep(String string) {
 		Path home = Paths.get("C:\\Users\\nlete\\Documents\\Diginamic\\29. Spring Boot\\TP\\");
 		Path fichierDep = home.resolve("./departementsFrance.csv");
 		boolean exists = Files.exists(fichierDep);
@@ -178,7 +177,7 @@ public class DepartementService {
 	 */
 	public DepartementDTO departementToDepartementDTO(Departement dep) {
 		DepartementDTO dto = new DepartementDTO();
-		dto.setCodeDepartement(dep.getId());
+		dto.setCodeDepartement(dep.getCodeDep());
 		dto.setNomDepartement(dep.getNom());
 		int nbHab = 0;
 		for (Ville item : dep.getVilles()) {

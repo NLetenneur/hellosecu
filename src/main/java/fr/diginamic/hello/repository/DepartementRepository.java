@@ -4,10 +4,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import fr.diginamic.hello.entities.Departement;
 
-public interface DepartementRepository extends CrudRepository<Departement, String>{
+public interface DepartementRepository extends CrudRepository<Departement, Integer>{
 
-	public boolean existsById(String string);
+	public boolean existsByCodeDep(String string);
 
-	public Departement getById(String string);
+	public Departement getByCodeDep(String string);
 	
 }

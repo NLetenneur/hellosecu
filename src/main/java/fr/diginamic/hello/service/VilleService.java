@@ -47,15 +47,15 @@ public class VilleService {
 
 	/**
 	 * Insere une ville dans la base de donnée
-	 * 
+ * 
 	 * @param ville La ville à inserer
 	 * @throws FonctionnalException
 	 */
 	public List<Ville> insertVille(Ville ville) throws FonctionnalException {
 		if ((ville.getNbHabitants() < 10) || (ville.getNom().length() < 2)
-				|| ((ville.getDepartement().getId().length() != 2) && ville.getDepartement().getId().length() != 3)) {
+				) {
 			throw new FonctionnalException(
-					"Le format de la ville n'est pas bon. Une ville doit avoir au moins dit habitants, son nom doit faire minimum deux lettres et le code département doit faire deux ou trois caractères de long.");
+					"Le format de la ville n'est pas bon. Une ville doit avoir au moins dix habitants, son nom doit faire minimum deux lettres et le code département doit faire deux ou trois caractères de long.");
 		}
 		if (villeDAO.isVilleInDB(ville)) {
 			throw new FonctionnalException("Cette ville est déjà en base");
@@ -64,16 +64,15 @@ public class VilleService {
 		return extractVilles();
 	}
 
-	/**
-	 * Modifie une ville donnée
-	 * 
-	 * @param id    L'id de la ville à modifier
-	 * @param ville Les nouvelles données
-	 * @throws FonctionnalException
-	 */
+//	/**
+//	 * Modifie une ville donnée
+//	 * 
+//	 * @param id    L'id de la ville à modifier
+//	 * @param ville Les nouvelles données
+//	 * @throws FonctionnalException
+//	 */
 	public List<Ville> updateVille(int id, Ville ville) throws FonctionnalException {
-		if ((ville.getNbHabitants() < 10) || (ville.getNom().length() < 2)
-				|| ((ville.getDepartement().getId().length() != 2) && ville.getDepartement().getId().length() != 3)) {
+		if ((ville.getNbHabitants() < 10) || (ville.getNom().length() < 2)) {
 			throw new FonctionnalException(
 					"Le format de la ville n'est pas bon. Une ville doit avoir au moins dit habitants, son nom doit faire minimum deux lettres et le code département doit faire deux ou trois caractères de long.");
 		}
@@ -101,12 +100,12 @@ public class VilleService {
 	 */
 	public void insertVilleFromFile(String[] tab) {
 		String nbHab = tab[9].replace(" ", "");
-		String id = tab[2];
+		String codeDep = tab[2];
 		if (tab[2].length() == 1) {
-			id = "0" + id;
+			codeDep = "0" + codeDep;
 		}
-		if (!repository.existsByNomAndDepartementId(tab[6], id) && (Integer.parseInt(nbHab) > 0)) {
-			Ville ville = new Ville(tab[6], Integer.parseInt(nbHab), depRepository.getById(id));
+		if (!repository.existsByNomAndDepartementCodeDep(tab[6], codeDep) && (Integer.parseInt(nbHab) > 0)) {
+			Ville ville = new Ville(tab[6], Integer.parseInt(nbHab), depRepository.getByCodeDep(codeDep));
 			repository.save(ville);
 		}
 	}
@@ -119,8 +118,9 @@ public class VilleService {
 	public VilleDTO villeToVilleDTO(Ville ville) {
 		VilleDTO dto = new VilleDTO();
 		dto.setCodeVille(ville.getId());
+		dto.setNom(ville.getNom());
 		dto.setNbHabitants(ville.getNbHabitants());
-		dto.setCodeDepartement(ville.getDepartement().getId());
+		dto.setCodeDepartement(ville.getDepartement().getCodeDep());
 		dto.setNomDepartement(ville.getDepartement().getNom());
 		return dto;
 	}
@@ -135,10 +135,13 @@ public class VilleService {
 		PrintWriter writer = response.getWriter();
 		writer.print("Nom,NbHabitants,codeDepartement,nomDepartement\n");
 		for (Ville ville : villes) {
-			writer.print(ville.getNom() + "," + ville.getNbHabitants() + "," + ville.getDepartement().getId() + ","
-					+ ville.getDepartement().getNom() + "\n");
+			writer.print(ville.getNom() + "," + ville.getNbHabitants() + "," 
+		+ ville.getDepartement().getId() + ","
+					+ ville.getDepartement().getNom() 
+					+ "\n");
 		}
 		writer.println();
+		response.flushBuffer();
 
 	}
 

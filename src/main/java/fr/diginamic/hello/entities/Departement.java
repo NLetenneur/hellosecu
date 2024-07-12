@@ -6,6 +6,8 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -19,7 +21,13 @@ import jakarta.validation.constraints.Size;
 @Table(name = "departement")
 public class Departement {
 	@Id
-	protected String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	protected int id;
+	
+	@NotNull
+	@Size(min = 2)
+	protected String codeDep;
+	
 	@NotNull
 	@Size(min = 2)
 	protected String nom;
@@ -31,8 +39,8 @@ public class Departement {
 	 * @param id
 	 * @param nom
 	 */
-	public Departement(String id, @NotNull @Size(min = 2) String nom) {
-		this.id = id;
+	public Departement(String codeDep, @NotNull @Size(min = 2) String nom) {
+		this.codeDep = codeDep;
 		this.nom = nom;
 	}
 
@@ -79,8 +87,22 @@ public class Departement {
 	/** Getter pour id
 	 * @return id
 	 */
-	public String getId() {
+	public int getId() {
 		return id;
+	}
+
+	/** Getter pour codeDep
+	 * @return codeDep
+	 */
+	public String getCodeDep() {
+		return codeDep;
+	}
+
+	/**Setter pour codeDep
+	 * @param codeDep codeDep 
+	 */
+	public void setCodeDep(String codeDep) {
+		this.codeDep = codeDep;
 	}
 	
 	

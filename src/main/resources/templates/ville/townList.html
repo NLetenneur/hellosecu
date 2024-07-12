@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <title>Liste des villes</title>
+  </head>
+  	<body>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>Ville</th>
+        <th>Nombre d'habitants</th>
+        <th>Département</th>
+        <th>Code département</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="villeDTO:${villes}">
+        <td th:text="${villeDTO.nom}"></td>
+        <td th:text="${villeDTO.nbHabitants}"></td>
+        <td th:text="${villeDTO.nomDepartement}"></td>
+        <td th:text="${villeDTO.codeDepartement}"></td>
+        <td><a th:href="@{'/deleteTown/' + ${villeDTO.codeVille}}">Delete</a></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+	</body>
+</html>

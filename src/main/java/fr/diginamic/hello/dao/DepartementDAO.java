@@ -47,7 +47,7 @@ public class DepartementDAO {
 	 */
 	public void insertDepartement(@Valid Departement departement) {
 		if (!isDepInDB(departement)) {
-			Departement d = new Departement(departement.getId(),departement.getNom());
+			Departement d = new Departement(departement.getCodeDep(),departement.getNom());
 			em.persist(d);
 		}
 	}
