@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,13 +24,14 @@ public class PageVillesDTOControlleur {
 	VilleService service;
 
 	@GetMapping("/townList")
-	public String getVillesDTO(Model villesModel) {
+	public String getVillesDTO(Model villesModel, Authentication authentication) {
 		Iterable<Ville> villes = repository.findAll();
 		List<VilleDTO> villesDTO = new ArrayList<>();
 		for (Ville item : villes) {
 			villesDTO.add(service.villeToVilleDTO(item));
 		}
 		villesModel.addAttribute("villes", villesDTO);
+		villesModel.addAttribute("authentication", authentication);
 		return "ville/townList";
 
 	}

@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import fr.diginamic.hello.DTO.VilleDTO;
@@ -88,6 +89,7 @@ public class VilleService {
 	 * 
 	 * @param id L'id de la ville à supprimer
 	 */
+	@PreAuthorize("hasRole('ADMIN')")
 	public List<Ville> deleteVille(int idVille) {
 		villeDAO.deleteVille(idVille);
 		return extractVilles();

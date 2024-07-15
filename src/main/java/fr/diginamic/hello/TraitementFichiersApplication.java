@@ -50,8 +50,8 @@ public class TraitementFichiersApplication implements CommandLineRunner {
 
 					// tester que la ligne fait la bonne taille
 					if (tab.length == 10) {
-						//departementService.insertDepartementFromFile(tab);
-						//villeService.insertVilleFromFile(tab);
+						departementService.insertDepartementFromFile(tab);
+						villeService.insertVilleFromFile(tab);
 					}
 				}
 			} catch (IOException e) {
