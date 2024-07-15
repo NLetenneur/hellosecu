@@ -17,7 +17,7 @@ import jakarta.annotation.PostConstruct;
  */
 
 @Service
-public class UserService {
+public class UserAccountService {
 	@Autowired
 	private UserRepository repository;
 	
